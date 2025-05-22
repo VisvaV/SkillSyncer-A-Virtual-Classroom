@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}SkillSyncer | Error{% endblock %}
+
+{% block content %}
+<div class="container mt-5 animate__animated animate__fadeIn animate__shakeX">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center animate__animated animate__wobble">
+            <h1 class="display-4 fw-bold" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-exclamation-triangle me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                An Error Occurred
+            </h1>
+            <p class="lead" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">{{ error_message }}</p>
+            <div class="mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary me-2 animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">Return to Home</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">Logout</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add hover effects to buttons for interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'all 0.3s ease';
+                this.style.boxShadow = '0 0 15px #0FFCBE';
+            });
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

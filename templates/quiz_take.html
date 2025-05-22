@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | Take Quiz - {{ quiz.QuizName }}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <!-- Header -->
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-question-circle me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                {{ quiz.QuizName }}
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Lesson: {{ quiz.lesson.LessonName if quiz.lesson else 'N/A' }} | Total Marks: {{ quiz.TotalMarks }}</p>
+            {% if quiz_submitted %}
+                <p class="text-center fw-semibold animate__animated animate__bounceIn" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;">Quiz Submitted! Your Score: {{ score|default(0) }} / {{ quiz.TotalMarks }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Role Check -->
+    {% if current_user.is_authenticated and current_user.Role == 'Student' %}
+        {% if not quiz_submitted %}
+            <!-- Quiz Form -->
+            <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                <div class="card-header bg-success text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                    <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-pen me-2" style="color: #0FFCBE;"></i>Questions</h5>
+                </div>
+                <div class="card-body" style="color: #e0f8f5;">
+                    <form method="POST" action="{{ url_for('quiz_take', quiz_id=quiz.QuizID) }}" novalidate class="animate__animated animate__fadeInUp">
+                        {% if questions %}
+                            {% for question in questions %}
+                                <div class="mb-4">
+                                    <h6 class="fw-semibold" style="color: #0FFCBE;">{{ loop.index }}. {{ question.QuestionText }}</h6>
+                                    <div class="ms-3">
+                                        <!-- Placeholder for options; adjust based on your design -->
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="question_{{ question.QuestionID }}" id="answer_{{ question.QuestionID }}_1" value="{{ question.CorrectAnswer }}" required style="background-color: #e0f8f5; border-color: #0FFCBE;">
+                                            <label class="form-check-label" for="answer_{{ question.QuestionID }}_1" style="color: #e0f8f5;">{{ question.CorrectAnswer }}</label>
+                                        </div>
+                                        <!-- Add more radio options if using an Option model; this is a minimal example -->
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted text-center" style="color: #e0f8f5;">No questions available for this quiz.</p>
+                        {% endif %}
+                    </div>
+                    {% if questions %}
+                        <div class="card-footer text-end animate__animated animate__fadeInUp">
+                            <button type="submit" class="btn btn-primary animate__animated animate__pulse" style="background-color: #106EBE; border-color: #0FFCBE; color: #e0f8f5; border-radius: 10px; padding: 10px; font-weight: 1000;" onclick="return confirm('Are you sure you want to submit your quiz?');">
+                                <i class="fas fa-check me-2" style="color: #0FFCBE;"></i>Submit Quiz
+                            </button>
+                        </div>
+                    {% endif %}
+                </form>
+            </div>
+        {% else %}
+            <!-- Quiz Results -->
+            <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                <div class="card-header bg-info text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                    <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-chart-bar me-2" style="color: #0FFCBE;"></i>Your Answers</h5>
+                </div>
+                <div class="card-body" style="color: #e0f8f5;">
+                    {% for question in questions %}
+                        <div class="mb-4">
+                            <h6 class="fw-semibold" style="color: #0FFCBE;">{{ loop.index }}. {{ question.QuestionText }}</h6>
+                            <p class="ms-3">
+                                Your Answer: <span class="{{ 'text-success' if question.is_correct else 'text-danger' }}">{{ question.user_answer|default('Not answered') }}</span><br>
+                                Correct Answer: <span class="text-success">{{ question.correct_answer }}</span>
+                            </p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+    {% else %}
+        <!-- Unauthorized Access -->
+        <div class="alert alert-danger text-center animate__animated animate__shakeX animate__wobble" role="alert" style="border: 2px solid #106EBE; box-shadow: 0 0 20px #106EBE; background-color: rgba(16, 110, 190, 0.8); color: #e0f8f5;">
+            <i class="fas fa-exclamation-triangle me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+            You do not have permission to take quizzes. Only students can access this page.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Enhance form submission validation and add hover effects
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const questions = document.querySelectorAll('[name^="question_"]');
+                let allAnswered = true;
+                questions.forEach(q => {
+                    if (!document.querySelector(`input[name="${q.name}"]:checked`)) {
+                        allAnswered = false;
+                    }
+                });
+                if (!allAnswered) {
+                    e.preventDefault();
+                    alert('Please answer all questions before submitting.');
+                }
+            });
+        }
+
+        // Add hover effects to cards
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.transition = 'transform 0.3s ease';
+                this.style.boxShadow = '0 0 20px #0FFCBE';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 0 15px #106EBE';
+            });
+        });
+
+        // Add hover effect to button
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'all 0.3s ease';
+                this.style.boxShadow = '0 0 15px #0FFCBE';
+            });
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

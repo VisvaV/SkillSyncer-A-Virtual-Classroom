@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | Classroom
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <!-- Header -->
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-chalkboard-teacher me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                {{ classroom.course.CourseName }}
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Join your virtual learning environment!</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm p-4 animate__animated animate__flipInX animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-body">
+            <h3 style="color: #e0f8f5; text-shadow: 0 0 10px #0FFCBE;">Lessons</h3>
+            {% if lessons %}
+                {% for lesson in lessons %}
+                    <div class="card mb-3 animate__animated animate__fadeInUp">
+                        <div class="card-header" style="background-color: #106EBE; color: #0FFCBE; text-shadow: 0 0 5px #e0f8f5; border-radius: 15px 15px 0 0;">
+                            <h5>{{ lesson.LessonName }}</h5>
+                        </div>
+                        <div class="card-body" style="background-color: rgba(0, 0, 0, 0.2);">
+                            <p style="color: #e0f8f5;">{{ lesson.Content if lesson.Content else 'No content available.' }}</p>
+
+                            <!-- Quizzes -->
+                            {% if lesson.quizzes %}
+                                <h6 style="color: #e0f8f5; text-shadow: 0 0 5px #0FFCBE;">Quizzes</h6>
+                                <ul class="list-group animate__animated animate__fadeIn">
+                                    {% for quiz in lesson.quizzes %}
+                                        <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.1); color: #e0f8f5;">
+                                            {{ quiz.QuizName }}
+                                            {% if quiz.is_submitted %}
+                                                <span class="badge bg-success" style="border: 1px solid #0FFCBE;">Submitted</span>
+                                            {% else %}
+                                                <a href="{{ url_for('quiz_take', quiz_id=quiz.QuizID) }}" class="btn btn-sm btn-primary animate__animated animate__pulse" style="background-color: #106EBE; border-color: #0FFCBE;">Take Quiz</a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <!-- Assignments -->
+                            {% if lesson.assignments %}
+                                <h6 style="color: #e0f8f5; text-shadow: 0 0 5px #0FFCBE;">Assignments</h6>
+                                <ul class="list-group animate__animated animate__fadeIn">
+                                    {% for assignment in lesson.assignments %}
+                                        <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.1); color: #e0f8f5;">
+                                            {{ assignment.AssignmentName }} (Due: {{ assignment.DueDate.strftime('%Y-%m-%d') if assignment.DueDate else 'N/A' }})
+                                            {% if assignment.is_submitted %}
+                                                <span class="badge bg-success" style="border: 1px solid #0FFCBE;">Submitted</span>
+                                            {% else %}
+                                                <a href="{{ url_for('submit_assignment', assignment_id=assignment.AssignmentID) }}" class="btn btn-sm btn-primary animate__animated animate__pulse" style="background-color: #106EBE; border-color: #0FFCBE;">Submit</a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <!-- Projects -->
+                            {% if lesson.projects %}
+                                <h6 style="color: #e0f8f5; text-shadow: 0 0 5px #0FFCBE;">Projects</h6>
+                                <ul class="list-group animate__animated animate__fadeIn">
+                                    {% for project in lesson.projects %}
+                                        <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.1); color: #e0f8f5;">
+                                            {{ project.ProjectName }} (Due: {{ project.DueDate.strftime('%Y-%m-%d') if project.DueDate else 'N/A' }})
+                                            {% if project.is_submitted %}
+                                                <span class="badge bg-success" style="border: 1px solid #0FFCBE;">Submitted</span>
+                                            {% else %}
+                                                <a href="{{ url_for('submit_project', project_id=project.ProjectID) }}" class="btn btn-sm btn-primary animate__animated animate__pulse" style="background-color: #106EBE; border-color: #0FFCBE;">Submit</a>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <!-- Problem Sheets (Exercise Problems) -->
+                            {% if lesson.exercise_problems %}
+                                <h6 style="color: #e0f8f5; text-shadow: 0 0 5px #0FFCBE;">Problem Sheets</h6>
+                                <ul class="list-group animate__animated animate__fadeIn">
+                                    {% for problem in lesson.exercise_problems %}
+                                        <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.1); color: #e0f8f5;">
+                                            {{ problem.ProblemText }}
+                                            {% if problem.Solution %}
+                                                <br><small style="color: #e0f8f5;">Solution: {{ problem.Solution }}</small>
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <!-- Sample Videos -->
+                            {% if lesson.sample_videos %}
+                                <h6 style="color: #e0f8f5; text-shadow: 0 0 5px #0FFCBE;">Sample Videos</h6>
+                                <ul class="list-group animate__animated animate__fadeIn">
+                                    {% for video in lesson.sample_videos %}
+                                        <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.1); color: #e0f8f5;">
+                                            <a href="{{ video.VideoLink }}" target="_blank" style="color: #0FFCBE; text-decoration: underline;">{{ video.Description if video.Description else 'Sample Video' }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            <!-- Materials -->
+                            {% if lesson.materials %}
+                                <h6 style="color: #e0f8f5; text-shadow: 0 0 5px #0FFCBE;">Materials</h6>
+                                <ul class="list-group animate__animated animate__fadeIn">
+                                    {% for material in lesson.materials %}
+                                        <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.1); color: #e0f8f5;">
+                                            <a href="{{ material.MaterialLink }}" target="_blank" style="color: #0FFCBE; text-decoration: underline;">{{ material.Description if material.Description else 'Material' }}</a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center text-muted animate__animated animate__shakeX" style="color: #e0f8f5; font-size: 1.1rem;">No lessons available for this classroom.</p>
+            {% endif %}
+            <a href="{{ url_for('dashboard') }}" class="btn btn-primary animate__animated animate__pulse" style="background-color: #106EBE; border-color: #0FFCBE;">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

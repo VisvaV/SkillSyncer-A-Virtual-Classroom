@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | Contact
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <h1 class="text-center mb-4 animate__animated animate__zoomIn animate__rubberBand" style="color: #106EBE; font-weight: 600; font-size: 3rem; text-shadow: 0 0 15px #0FFCBE;">
+        <i class="fas fa-envelope me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i> Contact Us
+    </h1>
+    <div class="card shadow-sm p-4 animate__animated animate__flipInX animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-body">
+            <p class="lead text-muted animate__animated animate__fadeInUp" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Have questions or need support? Reach out to us!</p>
+            <ul class="list-unstyled animate__animated animate__fadeIn">
+                <li style="color: #e0f8f5;"><i class="fas fa-envelope me-2" style="color: #0FFCBE;"></i> Email: <a href="mailto:support@skillsyncer.com" style="color: #0FFCBE; text-decoration: underline;">support@skillsyncer.com</a></li>
+                <li style="color: #e0f8f5;"><i class="fas fa-phone me-2" style="color: #0FFCBE;"></i> Phone: <a href="tel:+1800754555962" style="color: #0FFCBE; text-decoration: underline;">+1-800-SKILL-SYNC</a></li>
+                <li style="color: #e0f8f5;"><i class="fas fa-map-marker-alt me-2" style="color: #0FFCBE;"></i> Address: 123 Learning Lane, Education City</li>
+            </ul>
+            <div class="text-center mt-4 animate__animated animate__fadeInUp">
+                <a href="{{ url_for('login') }}" class="btn btn-primary animate__animated animate__pulse" style="background-color: #106EBE; border-color: #0FFCBE;">Back to Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | Quizzes - {{ course.CourseName }}
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <!-- Header -->
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-question-circle me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                Quizzes for {{ course.CourseName }} (Classroom {{ classroom.ClassroomID }})
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Test your knowledge and track your performance.</p>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} text-center animate__animated animate__bounceIn animate__pulse" role="alert" style="border: 2px solid {{ '#0FFCBE' if category == 'success' else '#106EBE' }}; box-shadow: 0 0 10px {{ '#0FFCBE' if category == 'success' else '#106EBE' }}; color: #e0f8f5; background-color: rgba(16, 110, 190, 0.8);">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="background-color: #0FFCBE;"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Teacher View: Add Quiz Form -->
+    {% if current_user.Role == 'Teacher' %}
+        <div class="card shadow-sm mb-4 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+            <div class="card-header bg-primary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-plus-circle me-2" style="color: #0FFCBE;"></i>Add New Quiz</h5>
+            </div>
+            <div class="card-body" style="color: #e0f8f5;">
+                <form method="POST" action="{{ url_for('add_quiz', course_id=course.CourseID, classroom_id=classroom.ClassroomID) }}" novalidate class="animate__animated animate__fadeInUp">
+                    {{ quiz_form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ quiz_form.quiz_name.label(class="form-label", style="font-weight: 1000;") }}<br>
+                        {{ quiz_form.quiz_name(class="form-control", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ quiz_form.lesson_id.label(class="form-label", style="font-weight: 1000;") }}<br>
+                        {{ quiz_form.lesson_id(class="form-control", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ quiz_form.total_marks.label(class="form-label", style="font-weight: 1000;") }}<br>
+                        {{ quiz_form.total_marks(class="form-control", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                    </div>
+                    <div class="d-grid">
+                        {{ quiz_form.submit(class="btn btn-primary animate__animated animate__pulse", style="background-color: #106EBE; border-color: #0FFCBE; color: #e0f8f5; border-radius: 10px; padding: 10px; font-weight: 1000;") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Quiz List for Both Roles -->
+    <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-header bg-success text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+            <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-list me-2" style="color: #0FFCBE;"></i>Available Quizzes</h5>
+        </div>
+        <div class="card-body" style="color: #e0f8f5;">
+            {% if quizzes %}
+                <div class="quiz-list">
+                    {% for quiz in quizzes %}
+                        <div class="card mb-3 animate__animated animate__fadeIn" style="border: 1px solid #0FFCBE; background-color: rgba(0, 0, 0, 0.2);">
+                            <div class="card-body">
+                                <h3 style="color: #0FFCBE;">{{ quiz.QuizName }}</h3>
+                                <p>Total Marks: {{ quiz.TotalMarks }}</p>
+                                {% if current_user.Role == 'Student' %}
+                                    {% set submission = quiz.submissions.filter_by(UserID=current_user.UserID).first() %}
+                                    {% if submission %}
+                                        <p>Score: {{ submission.Score }} / {{ quiz.TotalMarks }}</p>
+                                        <a href="{{ url_for('quiz_take', quiz_id=quiz.QuizID) }}" class="btn btn-outline-secondary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View Submission</a>
+                                    {% else %}
+                                        <a href="{{ url_for('quiz_take', quiz_id=quiz.QuizID) }}" class="btn btn-outline-primary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">Take Quiz</a>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center" style="color: #e0f8f5;">No quizzes available for this course.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center mt-4 animate__animated animate__fadeInUp">
+        <a href="{{ url_for('course_resources', course_id=course.CourseID) }}" class="btn btn-outline-secondary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">Back to Course Resources</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add hover effects to cards and buttons for interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.transition = 'transform 0.3s ease';
+                this.style.boxShadow = '0 0 20px #0FFCBE';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 0 15px #106EBE';
+            });
+        });
+
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'all 0.3s ease';
+                this.style.boxShadow = '0 0 15px #0FFCBE';
+            });
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | {{ 'Student' if current_user.Role == 'Student' else 'Teacher' }} Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <!-- Header -->
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-tachometer-alt me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                Welcome to Your {{ current_user.Role }} Dashboard, {{ current_user.Name }}!
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Manage your learning journey or teaching responsibilities here.</p>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} text-center animate__animated animate__bounceIn animate__pulse" role="alert" style="border: 2px solid {{ '#0FFCBE' if category == 'success' else '#106EBE' }}; box-shadow: 0 0 10px {{ '#0FFCBE' if category == 'success' else '#106EBE' }}; color: #e0f8f5; background-color: rgba(16, 110, 190, 0.8);">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="background-color: #0FFCBE;"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Role-Based Content -->
+    {% if current_user.Role == 'Student' %}
+        <!-- Student Dashboard -->
+        <div class="row g-4 animate__animated animate__fadeIn">
+            <!-- Enrolled Courses -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-primary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-book me-2" style="color: #0FFCBE;"></i> Enrolled Courses</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if enrolled_courses %}
+                            <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                                {% for enrollment in enrolled_courses %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: rgba(0, 0, 0, 0.2);">
+                                        <span>{{ enrollment.classroom.course.CourseName }}</span>
+                                        <div class="progress" style="width: 100px; height: 20px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ enrollment.Progress }}%; background-color: #0FFCBE;" aria-valuenow="{{ enrollment.Progress }}" aria-valuemin="0" aria-valuemax="100">
+                                                {{ enrollment.Progress }}%
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{{ url_for('courses') }}" class="btn btn-outline-primary mt-3 animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View All Courses</a>
+                        {% else %}
+                            <p class="text-muted" style="color: #e0f8f5;">No courses enrolled yet. <a href="{{ url_for('courses') }}" style="color: #0FFCBE;">Enroll now!</a></p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Tasks -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-warning text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-tasks me-2" style="color: #0FFCBE;"></i> Pending Tasks</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if pending_tasks %}
+                            <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                                {% for task in pending_tasks %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: rgba(0, 0, 0, 0.2);">
+                                        <span>{{ task.ActivityName }} ({{ task.ActivityType }})</span>
+                                        <span class="text-danger" style="color: #e0f8f5;">{{ task.DueDate.strftime('%Y-%m-%d') }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{{ url_for('timeline') }}" class="btn btn-outline-warning mt-3 animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View Timeline</a>
+                        {% else %}
+                            <p class="text-muted" style="color: #e0f8f5;">No pending tasks. Great job!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Badges -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-success text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-award me-2" style="color: #0FFCBE;"></i> Recent Badges</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if badges %}
+                            <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                                {% for badge in badges %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: rgba(0, 0, 0, 0.2);">
+                                        <span data-toggle="tooltip" title="{{ badge.badge.Description }}" style="color: #0FFCBE;">{{ badge.badge.BadgeName }}</span>
+                                        <span class="text-muted" style="color: #e0f8f5;">{{ badge.AwardedDate.strftime('%Y-%m-%d') }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{{ url_for('badges') }}" class="btn btn-outline-success mt-3 animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View All Badges</a>
+                        {% else %}
+                            <p class="text-muted" style="color: #e0f8f5;">No badges earned yet. Keep learning!</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-info text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-chart-line me-2" style="color: #0FFCBE;"></i> Quick Stats</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                            <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Courses Enrolled: <strong>{{ enrolled_courses|length }}</strong></li>
+                            <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Pending Tasks: <strong>{{ pending_tasks|length }}</strong></li>
+                            <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Badges Earned: <strong>{{ badges|length }}</strong></li>
+                            <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Average Grade: <strong>{{ avg_grade|round(2) }}%</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity (Additional Feature) -->
+            <div class="col-md-12">
+                <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-secondary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-history me-2" style="color: #0FFCBE;"></i> Recent Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_activities %}
+                            <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                                {% for activity in recent_activities %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: rgba(0, 0, 0, 0.2);">
+                                        <span>{{ activity.description }}</span>
+                                        <span class="text-muted" style="color: #e0f8f5;">{{ activity.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted" style="color: #e0f8f5;">No recent activity.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- Add this inside the Student Dashboard section, e.g., after Recent Activity -->
+<div class="col-md-12">
+    <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-header bg-info text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+            <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-chart-bar me-2" style="color: #0FFCBE;"></i> Analytics</h5>
+        </div>
+        <div class="card-body text-center">
+            <a href="{{ url_for('analytics_student') }}" class="btn btn-outline-info animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View Analytics</a>
+        </div>
+    </div>
+</div>
+
+    {% elif current_user.Role == 'Teacher' %}
+        <!-- Teacher Dashboard -->
+        <div class="row g-4 animate__animated animate__fadeIn">
+            <!-- Managed Courses -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-primary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-chalkboard-teacher me-2" style="color: #0FFCBE;"></i> Managed Courses</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if managed_courses %}
+                            <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                                {% for classroom in managed_courses %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: rgba(0, 0, 0, 0.2);">
+                                        <span>{{ classroom.course.CourseName }}</span>
+                                        <span class="badge bg-info rounded-pill" style="color: #0FFCBE; background-color: #106EBE;">{{ classroom.NumberOfEnrollments }} Students</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{{ url_for('course_management') }}" class="btn btn-outline-primary mt-3 animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">Manage Courses</a>
+                        {% else %}
+                            <p class="text-muted" style="color: #e0f8f5;">No courses assigned yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Progress Overview -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-success text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-users me-2" style="color: #0FFCBE;"></i> Student Progress</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if student_progress %}
+                            <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                                {% for enrollment in student_progress %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: rgba(0, 0, 0, 0.2);">
+                                        <span>{{ enrollment.user.Name }}</span>
+                                        <div class="progress" style="width: 100px; height: 20px;">
+                                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ enrollment.Progress }}%; background-color: #0FFCBE;" aria-valuenow="{{ enrollment.Progress }}" aria-valuemin="0" aria-valuemax="100">
+                                                {{ enrollment.Progress }}%
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <a href="{{ url_for('analytics_teacher') }}" class="btn btn-outline-success mt-3 animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View All Progress</a>
+                        {% else %}
+                            <p class="text-muted" style="color: #e0f8f5;">No student data available.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="col-md-12">
+                <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-info text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-chart-line me-2" style="color: #0FFCBE;"></i> Quick Stats</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                            <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Courses Managed: <strong>{{ managed_courses|length }}</strong></li>
+                            <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Total Students: <strong>{{ total_students }}</strong></li>
+                            <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Average Course Progress: <strong>{{ avg_course_progress|round(2) }}%</strong></li>
+                            <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Average Student Grade: <strong>{{ avg_grade|round(2) }}%</strong></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity (Additional Feature) -->
+            <div class="col-md-12">
+                <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                    <div class="card-header bg-secondary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-history me-2" style="color: #0FFCBE;"></i> Recent Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_activities %}
+                            <ul class="list-group list-group-flush" style="color: #e0f8f5;">
+                                {% for activity in recent_activities %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: rgba(0, 0, 0, 0.2);">
+                                        <span>{{ activity.description }}</span>
+                                        <span class="text-muted" style="color: #e0f8f5;">{{ activity.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted" style="color: #e0f8f5;">No recent activity.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- Fallback for Invalid Role -->
+        <div class="alert alert-danger text-center animate__animated animate__shakeX animate__wobble" role="alert" style="border: 2px solid #106EBE; box-shadow: 0 0 20px #106EBE; background-color: rgba(16, 110, 190, 0.8); color: #e0f8f5;">
+            <i class="fas fa-exclamation-triangle me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+            Invalid user role detected. Please contact support.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add hover effects to cards for interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.transition = 'transform 0.3s ease';
+                this.style.boxShadow = '0 0 20px #0FFCBE';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 0 15px #106EBE';
+            });
+        });
+
+        // Initialize tooltips (requires Bootstrap JS)
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                placement: 'top',
+                trigger: 'hover',
+                customClass: 'tooltip-custom',
+                title: tooltipTriggerEl.getAttribute('title')
+            });
+        });
+    });
+
+    // Custom tooltip styling (assumes CSS support in base.html or style.css)
+    const style = document.createElement('style');
+    style.textContent = `
+        .tooltip-custom {
+            background-color: #106EBE !important;
+            color: #0FFCBE !important;
+            border: 1px solid #0FFCBE;
+            box-shadow: 0 0 10px #0FFCBE;
+            font-family: 'Sofia Sans', sans-serif;
+            font-weight: 1000;
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | {{ course.CourseName }} Resources
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-book-open me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                {{ course.CourseName }} Resources
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Access all materials, assignments, quizzes, and videos for this course.</p>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} text-center animate__animated animate__bounceIn animate__pulse" role="alert" style="border: 2px solid {{ '#0FFCBE' if category == 'success' else '#106EBE' }}; box-shadow: 0 0 10px {{ '#0FFCBE' if category == 'success' else '#106EBE' }}; color: #e0f8f5; background-color: rgba(16, 110, 190, 0.8);">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="background-color: #0FFCBE;"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Problem Sheets (Assignments) -->
+    <div class="card shadow-sm mb-4 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-header bg-primary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+            <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-clipboard-list me-2" style="color: #0FFCBE;"></i>Problem Sheets</h5>
+        </div>
+        <div class="card-body" style="color: #e0f8f5;">
+            {% if assignments %}
+                <div class="resource-list">
+                    {% for assignment in assignments %}
+                        <div class="card mb-3 animate__animated animate__fadeIn" style="border: 1px solid #0FFCBE; background-color: rgba(0, 0, 0, 0.2);">
+                            <div class="card-body">
+                                <h3 style="color: #0FFCBE;">{{ assignment.AssignmentName }}</h3>
+                                <p>Total Marks: {{ assignment.TotalMarks }}</p>
+                                {% set submission = user_submissions[assignment.AssignmentID] if assignment.AssignmentID in user_submissions else none %}
+                                {% if submission %}
+                                    <p>Grade: {{ submission.Grade if submission.Grade is not none else 'Not graded' }}</p>
+                                {% else %}
+                                    <p style="color: #e0f8f5;">Not submitted</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center" style="color: #e0f8f5;">No problem sheets available.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Materials -->
+    <div class="card shadow-sm mb-4 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-header bg-success text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+            <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-file-alt me-2" style="color: #0FFCBE;"></i>Materials</h5>
+        </div>
+        <div class="card-body" style="color: #e0f8f5;">
+            {% if materials %}
+                <div class="resource-list">
+                    {% for material in materials %}
+                        <div class="card mb-3 animate__animated animate__fadeIn" style="border: 1px solid #0FFCBE; background-color: rgba(0, 0, 0, 0.2);">
+                            <div class="card-body">
+                                <h3 style="color: #0FFCBE;">{{ material.MaterialTitle }}</h3>
+                                <a href="{{ material.MaterialURL }}" target="_blank" class="btn btn-outline-primary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View Material</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center" style="color: #e0f8f5;">No materials available.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Video Links -->
+    <div class="card shadow-sm mb-4 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-header bg-info text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+            <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-video me-2" style="color: #0FFCBE;"></i>Video Links</h5>
+        </div>
+        <div class="card-body" style="color: #e0f8f5;">
+            {% if videos %}
+                <div class="resource-list">
+                    {% for video in videos %}
+                        <div class="card mb-3 animate__animated animate__fadeIn" style="border: 1px solid #0FFCBE; background-color: rgba(0, 0, 0, 0.2);">
+                            <div class="card-body">
+                                <h3 style="color: #0FFCBE;">{{ video.VideoTitle }}</h3>
+                                <a href="{{ video.VideoURL }}" target="_blank" class="btn btn-outline-primary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">Watch Video</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center" style="color: #e0f8f5;">No videos available.</p>
+            {% endif %}
+        </div>
+    </div>
+
+   <!-- Quizzes -->
+<div class="card shadow-sm mb-4 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+    <div class="card-header bg-warning text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+        <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-question-circle me-2" style="color: #0FFCBE;"></i>Quizzes</h5>
+    </div>
+    <div class="card-body" style="color: #e0f8f5;">
+        {% if quizzes %}
+            <div class="resource-list">
+                {% for quiz in quizzes %}
+                    <div class="card mb-3 animate__animated animate__fadeIn" style="border: 1px solid #0FFCBE; background-color: rgba(0, 0, 0, 0.2);">
+                        <div class="card-body">
+                            <h3 style="color: #0FFCBE;">{{ quiz.QuizName }}</h3>
+                            <p>Total Marks: {{ quiz.TotalMarks }}</p>
+                            {% set submission = user_submissions[quiz.QuizID] if quiz.QuizID in user_submissions else none %}
+                            {% if submission %}
+                                <p>Score: {{ submission.Score }} / {{ quiz.TotalMarks }}</p>
+                                <a href="{{ url_for('quiz_take', quiz_id=quiz.QuizID) }}" class="btn btn-outline-secondary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View Submission</a>
+                            {% else %}
+                                <a href="{{ url_for('quiz_take', quiz_id=quiz.QuizID) }}" class="btn btn-outline-primary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">Take Quiz</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="text-center" style="color: #e0f8f5;">No quizzes available.</p>
+        {% endif %}
+    </div>
+</div>
+
+    <div class="text-center mt-4 animate__animated animate__fadeInUp">
+        <a href="{{ url_for('courses') }}" class="btn btn-outline-secondary animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">Back to Courses</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add hover effects to cards and buttons for interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.transition = 'transform 0.3s ease';
+                this.style.boxShadow = '0 0 20px #0FFCBE';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 0 15px #106EBE';
+            });
+        });
+
+        const buttons = document.querySelectorAll('.btn');
+        buttons.forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+                this.style.transition = 'all 0.3s ease';
+                this.style.boxShadow = '0 0 15px #0FFCBE';
+            });
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    });
+</script>
+{% endblock %}

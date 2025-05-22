@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | My Progress
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <!-- Header -->
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-chart-line me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                My Progress
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Track your learning journey across all courses.</p>
+        </div>
+    </div>
+
+    <!-- Role Check -->
+    {% if current_user.is_authenticated and current_user.Role == 'Student' %}
+        <!-- Progress Overview -->
+        <div class="card shadow-sm mb-4 animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+            <div class="card-header bg-info text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-tachometer-alt me-2" style="color: #0FFCBE;"></i>Overall Stats</h5>
+            </div>
+            <div class="card-body" style="color: #e0f8f5;">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Courses Enrolled: <strong>{{ stats.courses_enrolled }}</strong></li>
+                    <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Overall Progress: <strong>{{ stats.overall_progress|round(2) }}%</strong></li>
+                    <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Assignments Completed: <strong>{{ stats.assignments_completed }} / {{ stats.assignments_total }}</strong></li>
+                    <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Quizzes Completed: <strong>{{ stats.quizzes_completed }} / {{ stats.quizzes_total }}</strong></li>
+                    <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Projects Completed: <strong>{{ stats.projects_completed }} / {{ stats.projects_total }}</strong></li>
+                    <li class="list-group-item" style="background-color: rgba(0, 0, 0, 0.2);">Average Grade: <strong>{{ stats.avg_grade|round(2) }}%</strong></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Course Progress -->
+        <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+            <div class="card-header bg-primary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-book me-2" style="color: #0FFCBE;"></i>Course Progress</h5>
+            </div>
+            <div class="card-body" style="color: #e0f8f5;">
+                {% if courses %}
+                    <div class="table-responsive">
+                        <table class="table table-hover" style="color: #e0f8f5;">
+                            <thead>
+                                <tr>
+                                    <th style="color: #0FFCBE;">Course Name</th>
+                                    <th style="color: #0FFCBE;">Classroom</th>
+                                    <th style="color: #0FFCBE;">Progress</th>
+                                    <th style="color: #0FFCBE;">Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for course in courses %}
+                                    <tr>
+                                        <td>{{ course.CourseName }}</td>
+                                        <td>{{ course.StartDate.strftime('%Y-%m-%d') }} - {{ course.EndDate.strftime('%Y-%m-%d') }}</td>
+                                        <td>
+                                            <div class="progress" style="height: 20px;">
+                                                <div class="progress-bar bg-success" role="progressbar" style="width: {{ course.Progress }}%; background-color: #0FFCBE;" aria-valuenow="{{ course.Progress }}" aria-valuemin="0" aria-valuemax="100">{{ course.Progress|round(2) }}%</div>
+                                            </div>
+                                        </td>
+                                        <td>{{ course.Grade|round(2) if course.Grade else 'N/A' }}%</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center" style="color: #e0f8f5;">No courses enrolled yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    {% else %}
+        <div class="alert alert-danger text-center animate__animated animate__shakeX animate__wobble" role="alert" style="border: 2px solid #106EBE; box-shadow: 0 0 20px #106EBE; background-color: rgba(16, 110, 190, 0.8); color: #e0f8f5;">
+            <i class="fas fa-exclamation-triangle me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+            Only students can view their progress.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add hover effects to cards for interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.transition = 'transform 0.3s ease';
+                this.style.boxShadow = '0 0 20px #0FFCBE';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 0 15px #106EBE';
+            });
+        });
+    });
+</script>
+{% endblock %}

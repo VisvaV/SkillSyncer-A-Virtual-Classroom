@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | Course Management
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <!-- Header -->
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-chalkboard-teacher me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                Course Management
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Create and manage your courses, classrooms, and lessons.</p>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} text-center animate__animated animate__bounceIn animate__pulse" role="alert" style="border: 2px solid {{ '#0FFCBE' if category == 'success' else '#106EBE' }}; box-shadow: 0 0 10px {{ '#0FFCBE' if category == 'success' else '#106EBE' }}; color: #e0f8f5; background-color: rgba(16, 110, 190, 0.8);">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="background-color: #0FFCBE;"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Add New Course -->
+    <div class="row g-4 mb-5 animate__animated animate__flipInX">
+        <div class="col-md-12">
+            <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                <div class="card-header bg-primary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                    <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-plus-circle me-2" style="color: #0FFCBE;"></i> Add New Course</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_course') }}" class="animate__animated animate__fadeIn">
+                        {{ course_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ course_form.course_name.label(class="form-label", style="color: #e0f8f5;") }}
+                            {{ course_form.course_name(class="form-control", placeholder="Enter course name", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                            {% for error in course_form.course_name.errors %}
+                                <div class="text-danger" style="color: #e0f8f5;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ course_form.description.label(class="form-label", style="color: #e0f8f5;") }}
+                            {{ course_form.description(class="form-control", rows=3, placeholder="Enter course description", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                            {% for error in course_form.description.errors %}
+                                <div class="text-danger" style="color: #e0f8f5;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center">
+                            {{ course_form.submit(class="btn btn-primary animate__animated animate__pulse", style="background-color: #106EBE; border-color: #0FFCBE;") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Classroom -->
+    <div class="row g-4 mb-5 animate__animated animate__flipInX">
+        <div class="col-md-12">
+            <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                <div class="card-header bg-warning text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                    <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-plus-circle me-2" style="color: #0FFCBE;"></i> Add New Classroom</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_classroom') }}" class="animate__animated animate__fadeIn">
+                        {{ classroom_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ classroom_form.course_id.label(class="form-label", style="color: #e0f8f5;") }}
+                            {{ classroom_form.course_id(class="form-control", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                            {% for error in classroom_form.course_id.errors %}
+                                <div class="text-danger" style="color: #e0f8f5;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ classroom_form.start_date.label(class="form-label", style="color: #e0f8f5;") }}
+                            {{ classroom_form.start_date(class="form-control", type="date", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                            {% for error in classroom_form.start_date.errors %}
+                                <div class="text-danger" style="color: #e0f8f5;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ classroom_form.end_date.label(class="form-label", style="color: #e0f8f5;") }}
+                            {{ classroom_form.end_date(class="form-control", type="date", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                            {% for error in classroom_form.end_date.errors %}
+                                <div class="text-danger" style="color: #e0f8f5;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center">
+                            {{ classroom_form.submit(class="btn btn-warning animate__animated animate__pulse", style="background-color: #106EBE; border-color: #0FFCBE;") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Lesson -->
+    <div class="row g-4 mb-5 animate__animated animate__flipInX">
+        <div class="col-md-12">
+            <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                <div class="card-header bg-success text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                    <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-plus-circle me-2" style="color: #0FFCBE;"></i> Add New Lesson</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('add_lesson') }}" class="animate__animated animate__fadeIn">
+                        {{ lesson_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ lesson_form.classroom_id.label(class="form-label", style="color: #e0f8f5;") }}
+                            {{ lesson_form.classroom_id(class="form-control", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                            {% for error in lesson_form.classroom_id.errors %}
+                                <div class="text-danger" style="color: #e0f8f5;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ lesson_form.lesson_name.label(class="form-label", style="color: #e0f8f5;") }}
+                            {{ lesson_form.lesson_name(class="form-control", placeholder="Enter lesson name", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                            {% for error in lesson_form.lesson_name.errors %}
+                                <div class="text-danger" style="color: #e0f8f5;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            {{ lesson_form.content.label(class="form-label", style="color: #e0f8f5;") }}
+                            {{ lesson_form.content(class="form-control", rows=3, placeholder="Enter lesson content", style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                            {% for error in lesson_form.content.errors %}
+                                <div class="text-danger" style="color: #e0f8f5;">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center">
+                            {{ lesson_form.submit(class="btn btn-success animate__animated animate__pulse", style="background-color: #106EBE; border-color: #0FFCBE;") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Your Courses -->
+    <div class="row g-4 animate__animated animate__flipInX">
+        <div class="col-md-12">
+            <div class="card shadow-sm animate__animated animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                <div class="card-header bg-info text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+                    <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-book me-2" style="color: #0FFCBE;"></i> Your Courses</h5>
+                </div>
+                <div class="card-body">
+                    {% if courses %}
+                        <div class="row animate__animated animate__fadeIn">
+                            {% for course in courses %}
+                                <div class="col-md-4 mb-4 animate__animated animate__fadeInUp">
+                                    <div class="card shadow-sm h-100" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 15px #106EBE; background-color: rgba(16, 110, 190, 0.8);">
+                                        <div class="card-body">
+                                            <h5 class="card-title" style="color: #e0f8f5; text-shadow: 0 0 5px #0FFCBE;">{{ course.CourseName }}</h5>
+                                            <p class="card-text text-muted" style="color: #e0f8f5;">{{ course.Description or 'No description available.' }}</p>
+                                            <a href="{{ url_for('course_detail', course_id=course.CourseID) }}" class="btn btn-outline-info animate__animated animate__pulse" style="color: #0FFCBE; border-color: #0FFCBE; background-color: #106EBE;">View Details</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted text-center animate__animated animate__shakeX" style="color: #e0f8f5; font-size: 1.1rem;">No courses available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add hover effects to cards for interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px)';
+                this.style.transition = 'transform 0.3s ease';
+                this.style.boxShadow = '0 0 20px #0FFCBE';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = '0 0 15px #106EBE';
+            });
+        });
+    });
+</script>
+{% endblock %}

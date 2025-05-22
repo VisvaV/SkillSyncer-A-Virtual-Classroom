@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | Student Analytics
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <!-- Header -->
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-chart-pie me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                Student Analytics
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Track your personal learning progress and performance.</p>
+        </div>
+    </div>
+
+    <!-- Progress Stats -->
+    <div class="card shadow-sm mb-4 animate__animated animate__flipInX animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-header bg-primary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+            <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-tachometer-alt me-2" style="color: #0FFCBE;"></i>Your Progress</h5>
+        </div>
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item animate__animated animate__fadeInUp" style="color: #e0f8f5; background-color: rgba(0, 0, 0, 0.2);">Courses Enrolled: <strong>{{ stats.courses_enrolled|default(0) }}</strong></li>
+                <li class="list-group-item animate__animated animate__fadeInUp" style="color: #e0f8f5; background-color: rgba(0, 0, 0, 0.2);">Overall Progress: <strong>{{ (stats.overall_progress|default(0.0)|round(2))|string|default('0.00') }}%</strong></li>
+                <li class="list-group-item animate__animated animate__fadeInUp" style="color: #e0f8f5; background-color: rgba(0, 0, 0, 0.2);">Average Grade: <strong>{{ (stats.avg_grade|default(0.0)|round(2))|string|default('0.00') }}%</strong></li>
+                <li class="list-group-item animate__animated animate__fadeInUp" style="color: #e0f8f5; background-color: rgba(0, 0, 0, 0.2);">Assignments Completed: <strong>{{ stats.assignments_completed|default(0) }} / {{ stats.assignments_total|default(0) }}</strong></li>
+                <li class="list-group-item animate__animated animate__fadeInUp" style="color: #e0f8f5; background-color: rgba(0, 0, 0, 0.2);">Quizzes Completed: <strong>{{ stats.quizzes_completed|default(0) }} / {{ stats.quizzes_total|default(0) }}</strong></li>
+                <li class="list-group-item animate__animated animate__fadeInUp" style="color: #e0f8f5; background-color: rgba(0, 0, 0, 0.2);">Projects Completed: <strong>{{ stats.projects_completed|default(0) }} / {{ stats.projects_total|default(0) }}</strong></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Course Progress -->
+    <div class="card shadow-sm animate__animated animate__flipInX animate__pulse" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-header bg-primary text-white animate__animated animate__heartBeat" style="border-radius: 15px 15px 0 0; background-color: #106EBE;">
+            <h5 class="mb-0" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"><i class="fas fa-book me-2" style="color: #0FFCBE;"></i>Course Progress</h5>
+        </div>
+        <div class="card-body">
+            {% if performance is defined and performance|length > 0 %}
+                <div class="table-responsive">
+                    <table class="table table-hover animate__animated animate__fadeIn animate__tada">
+                        <thead>
+                            <tr style="background-color: #106EBE; color: #0FFCBE; text-shadow: 0 0 10px #e0f8f5;">
+                                <th>Course Name</th>
+                                <th>Progress</th>
+                                <th>Grade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for perf in performance %}
+                                <tr style="color: #e0f8f5; background-color: rgba(0, 0, 0, 0.1);" class="animate__animated animate__fadeInUp animate__bounceIn">
+                                    <td>{{ perf.CourseName|default('N/A') }}</td>
+                                    <td>{{ (perf.Progress|default(0.0)|round(2))|string|default('0.00') }}%</td>
+                                    <td>{{ ((perf.AvgQuizScore|default(0.0) + perf.AvgAssignmentGrade|default(0.0) + perf.AvgProjectGrade|default(0.0)) / 3)|round(2)|string|default('0.00') }}%</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-center text-muted animate__animated animate__fadeIn animate__shakeX" style="color: #e0f8f5; font-size: 1.1rem;">No performance data available. Enroll in a course to see your progress!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

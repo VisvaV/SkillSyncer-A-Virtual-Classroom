@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% block title %}SkillSyncer | Login{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center min-vh-100 animate__animated animate__fadeIn animate__bounceIn">
+    <div class="card shadow-lg p-4 animate__animated animate__pulse" style="max-width: 400px; width: 100%; border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+        <div class="card-body">
+            <h2 class="text-center mb-4" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE; font-size: 2.5rem; font-weight: 1000;">
+                <i class="fas fa-sign-in-alt me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i> Login
+            </h2>
+            <p class="text-center text-muted mb-4" style="color: #e0f8f5; font-size: 1.2rem; text-shadow: 0 0 5px #0FFCBE;">Welcome back! Please enter your credentials.</p>
+
+            <!-- Login Form -->
+            <form method="POST" action="{{ url_for('login') }}" novalidate class="animate__animated animate__fadeInUp">
+                {{ form.hidden_tag() }}
+
+                <!-- Email Field -->
+                <div class="mb-3">
+                    <label for="email" class="form-label" style="color: #e0f8f5; font-weight: 1000;">Email</label>
+                    {{ form.email(class="form-control", id="email", placeholder="Enter your email", required=True, style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                    {% if form.email.errors %}
+                        {% for error in form.email.errors %}
+                            <small class="text-danger" style="color: #e0f8f5;">{{ error }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Password Field -->
+                <div class="mb-3">
+                    <label for="password" class="form-label" style="color: #e0f8f5; font-weight: 1000;">Password</label>
+                    {{ form.password(class="form-control", id="password", placeholder="Enter your password", required=True, style="background-color: rgba(0, 0, 0, 0.2); color: #e0f8f5; border-color: #0FFCBE;") }}
+                    {% if form.password.errors %}
+                        {% for error in form.password.errors %}
+                            <small class="text-danger" style="color: #e0f8f5;">{{ error }}</small>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Remember Me Checkbox -->
+                <div class="mb-3 form-check">
+                    {{ form.remember(class="form-check-input", id="remember", style="background-color: #e0f8f5; border-color: #0FFCBE;") }}
+                    <label class="form-check-label" for="remember" style="color: #e0f8f5; font-weight: 1000;">Remember me</label>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    {{ form.submit(class="btn btn-primary btn-block animate__animated animate__pulse", style="background-color: #106EBE; border-color: #0FFCBE; color: #e0f8f5; border-radius: 10px; padding: 10px; font-weight: 1000;") }}
+                </div>
+            </form>
+
+            <!-- Register Link -->
+            <div class="text-center mt-2">
+                <p style="color: #e0f8f5;">Don't have an account? <a href="{{ url_for('register') }}" style="color: #0FFCBE; text-shadow: 0 0 5px #106EBE; font-weight: 1000;">Register here</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Add focus effect on form fields with enhanced styling
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('.form-control');
+        inputs.forEach(input => {
+            input.addEventListener('focus', function() {
+                this.style.borderColor = '#0FFCBE';
+                this.style.boxShadow = '0 0 10px #0FFCBE';
+                this.style.transform = 'scale(1.02)';
+                this.style.transition = 'all 0.3s ease';
+            });
+            input.addEventListener('blur', function() {
+                this.style.borderColor = '#0FFCBE';
+                this.style.boxShadow = 'none';
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Add hover effect to links
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+            link.addEventListener('mouseenter', function() {
+                this.style.textShadow = '0 0 15px #0FFCBE';
+                this.style.transform = 'scale(1.1)';
+                this.style.transition = 'all 0.3s ease';
+            });
+            link.addEventListener('mouseleave', function() {
+                this.style.textShadow = '0 0 5px #106EBE';
+                this.style.transform = 'scale(1)';
+            });
+        });
+    });
+</script>
+{% endblock %}

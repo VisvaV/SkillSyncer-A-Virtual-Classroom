@@ -1,0 +1,287 @@
+/* General Styles */
+body {
+    background: linear-gradient(135deg, #e0f0fa, #e0f8f5); /* Subtle gradient with Blue and Mint tones */
+    font-family: 'Sofia Sans', 'Poppins', sans-serif; /* Sofia Pro Black equivalent with fallback */
+    font-weight: 1000; /* Bold aesthetic */
+    color: #333;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow-x: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Loading Bar */
+.loading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: transparent;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.progress-bar-inner {
+    height: 100%;
+    width: 0;
+    animation: loading 2s infinite ease-in-out;
+}
+
+@keyframes loading {
+    0% { width: 0; background: #106EBE; }
+    50% { width: 50%; background: #0FFCBE; }
+    100% { width: 100%; background: #106EBE; }
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: linear-gradient(to bottom, #106EBE, #0A4D89); /* Blue gradient */
+    padding-top: 20px;
+    width: 200px;
+    box-shadow: 2px 0 10px rgba(16, 110, 190, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.sidebar img {
+    width: 80%;
+    margin: 0 auto 20px;
+    display: block;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.sidebar img:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 10px #0FFCBE);
+}
+
+.nav-link {
+    color: #e0f8f5; /* Mint-inspired light text */
+    padding: 10px 20px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-link:hover {
+    background-color: #0FFCBE; /* Mint hover */
+    color: #106EBE;
+    border-radius: 5px;
+    box-shadow: 0 0 15px #0FFCBE; /* Glow effect */
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    width: 0;
+    height: 2px;
+    background: #0FFCBE;
+    transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+    width: 60%;
+}
+
+/* Main Content */
+main {
+    margin-left: 200px; /* Offset for sidebar */
+    padding: 20px;
+    animation: slideInFromLeft 0.5s ease-out;
+}
+
+@keyframes slideInFromLeft {
+    from { transform: translateX(-100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+h1, h2, h3 {
+    color: #106EBE; /* Bold Blue */
+    font-weight: 1000;
+    text-shadow: 0 0 5px rgba(16, 110, 190, 0.3);
+}
+
+.card {
+    background: #ffffff;
+    border: 1px solid #e0f8f5;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(16, 110, 190, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(16, 110, 190, 0.2);
+    filter: drop-shadow(0 0 10px #0FFCBE); /* Glow effect */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.card-title {
+    color: #106EBE; /* Medium Blue */
+    font-size: 1.5rem;
+    font-weight: 1000;
+}
+
+.card-text {
+    color: #4A90E2; /* Lighter Blue */
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(45deg, #106EBE, #0A4D89); /* Blue gradient */
+    border: none;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 1000;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(16, 110, 190, 0.5);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(45deg, #0FFCBE, #00BFA5); /* Mint gradient */
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px #0FFCBE; /* Enhanced glow */
+}
+
+.btn-secondary {
+    background: #e0f8f5;
+    color: #106EBE;
+    border: 1px solid #106EBE;
+    padding: 12px 25px;
+    font-size: 16px;
+    font-weight: 1000;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+}
+
+.btn-secondary:hover {
+    background: #106EBE;
+    color: #0FFCBE;
+    box-shadow: 0 0 15px #0FFCBE;
+}
+
+/* Dropdown */
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(16, 110, 190, 0.1);
+    background: #ffffff;
+    animation: fadeIn 0.3s ease;
+}
+
+.dropdown-item:hover {
+    background: #e0f8f5;
+    color: #106EBE;
+    transition: all 0.3s ease;
+}
+
+/* Progress Bar */
+.progress {
+    height: 25px;
+    background: #e0f8f5;
+    border-radius: 15px;
+    box-shadow: inset 0 0 5px rgba(16, 110, 190, 0.2);
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, #106EBE, #0FFCBE);
+    transition: width 0.5s ease-in-out, box-shadow 0.3s ease;
+    border-radius: 15px;
+    box-shadow: 0 0 5px #0FFCBE;
+}
+
+.progress-bar:hover {
+    box-shadow: 0 0 10px #0FFCBE;
+}
+
+/* Forms */
+.form-control {
+    border-radius: 15px;
+    border: 2px solid #e0f8f5;
+    padding: 12px;
+    font-weight: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 5px rgba(16, 110, 190, 0.2);
+}
+
+.form-control:focus {
+    border-color: #106EBE;
+    box-shadow: 0 0 15px #0FFCBE;
+    transform: scale(1.01);
+}
+
+/* Custom Aesthetics */
+.container-fluid {
+    padding: 0;
+}
+
+.text-center {
+    color: #106EBE;
+    text-shadow: 0 0 3px rgba(16, 110, 190, 0.3);
+}
+
+.glow-on-hover {
+    transition: box-shadow 0.3s ease;
+}
+
+.glow-on-hover:hover {
+    box-shadow: 0 0 20px #0FFCBE, 0 0 30px #106EBE;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100px;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    main {
+        margin-left: 100px;
+    }
+    .nav-link {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
+    .card {
+        margin-bottom: 15px;
+    }
+}
+
+.alert {
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: 1000;
+    animation: bounceIn 0.5s ease;
+}
+
+.alert-success {
+    background: #e0f8f5;
+    color: #106EBE;
+    border: 2px solid #0FFCBE;
+    box-shadow: 0 0 10px #0FFCBE;
+}
+
+.alert-danger {
+    background: #ffebee;
+    color: #106EBE;
+    border: 2px solid #106EBE;
+    box-shadow: 0 0 10px #106EBE;
+}

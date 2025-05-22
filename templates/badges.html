@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    SkillSyncer | My Badges
+{% endblock %}
+
+{% block content %}
+<div class="container my-5 animate__animated animate__fadeInUp animate__jackInTheBox">
+    <!-- Header -->
+    <div class="row mb-4 animate__animated animate__zoomIn animate__rubberBand">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-center" style="color: #106EBE; text-shadow: 0 0 15px #0FFCBE; font-size: 3rem;">
+                <i class="fas fa-award me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                My Badges
+            </h1>
+            <p class="text-center text-muted" style="color: #e0f8f5; font-size: 1.3rem; text-shadow: 0 0 5px #0FFCBE;">Celebrate your achievements!</p>
+        </div>
+    </div>
+
+    <!-- Role Check -->
+    {% if current_user.is_authenticated and current_user.Role == 'Student' %}
+        <div class="row row-cols-1 row-cols-md-3 g-4 animate__animated animate__flipInX animate__pulse">
+            {% if badges %}
+                {% for badge in badges %}
+                    <div class="col animate__animated animate__fadeInUp">
+                        <div class="card shadow-sm h-100" style="border-radius: 15px; border: 2px solid #0FFCBE; box-shadow: 0 0 25px #106EBE; background-color: rgba(16, 110, 190, 0.9);">
+                            <div class="card-body text-center">
+                                <i class="fas fa-trophy fa-3x mb-3" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+                                <h5 class="card-title fw-semibold" style="color: #e0f8f5; text-shadow: 0 0 5px #0FFCBE;">{{ badge.BadgeName }}</h5>
+                                <p class="card-text" style="color: #e0f8f5;">{{ badge.Description }}</p>
+                                <p class="text-muted small" style="color: #e0f8f5;">Awarded: {{ badge.AwardedDate.strftime('%Y-%m-%d') }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center animate__animated animate__shakeX">
+                    <p class="text-muted" style="color: #e0f8f5; font-size: 1.1rem;">No badges earned yet. Keep learning!</p>
+                </div>
+            {% endif %}
+        </div>
+
+    {% else %}
+        <div class="alert alert-danger text-center animate__animated animate__shakeX animate__wobble" role="alert" style="border: 2px solid #106EBE; box-shadow: 0 0 20px #106EBE; background-color: rgba(16, 110, 190, 0.8); color: #e0f8f5;">
+            <i class="fas fa-exclamation-triangle me-2" style="color: #0FFCBE; text-shadow: 0 0 10px #106EBE;"></i>
+            Only students can view their badges.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
