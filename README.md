@@ -1,7 +1,7 @@
 # Skillsyncer - Educational Management System
 
 ## Overview
-Skillsyncer is an educational management system developed by Visva V (23PD40) and Ghirivaasan A (23PD11) at PSG College of Technology, Coimbatore, in 2025. The system is designed to manage academic activities for students and teachers, including course enrollment, classroom management, lessons, assignments, quizzes, projects, and badge awards. It uses MySQL 8.0 as the backend database, implementing PL/SQL components like stored procedures, functions, triggers, and views to automate processes. The frontend is a Python Flask application with HTML, CSS (Bootstrap 5), and JavaScript, providing an interactive interface for users.
+Skillsyncer is an educational management system which is designed to manage academic activities for students and teachers, including course enrollment, classroom management, lessons, assignments, quizzes, projects, and badge awards. It uses MySQL 8.0 as the backend database, implementing PL/SQL components like stored procedures, functions, triggers, and views to automate processes. The frontend is a Python Flask application with HTML, CSS (Bootstrap 5), and JavaScript, providing an interactive interface for users.
 This repository highlights the DBMS implementation, focusing on database automation and its integration with a web application to streamline educational workflows.
 Features
 
@@ -270,5 +270,5 @@ This project is licensed under the MIT License. See the LICENSE file for details
 ## Authors
 
 Email Visva V at visvafelix2005@gmail.com  for the schema file or inquiries.  
-Report issues at: https://github.com/yourusername/skillsyncer/issues
+Report issues at: https://github.com/VisvaV/skillsyncer/issues
 
